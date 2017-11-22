@@ -22,7 +22,7 @@ If you don't care about successful completion of a dependency in order to start 
 
 ## Submitting an array of tasks
 
-This is useful when you wish to run the same program on several files. In your job submission file you would have something like the following;
+This is useful when you wish to run the same program with the same parameters on several files. In your job submission file you would have something like the following;
 
 	#!/bin/bash -e
 	#SBATCH -p nbi-short
@@ -90,6 +90,16 @@ Show detailed information using atop about node on which a job is running:
 For a particular node:
 
 	snodetop -n n128n1
+
+### snoderes
+
+Show resource allocation of nodes you have access to:
+
+	snoderes
+
+For all nodes on the cluster:
+
+	snoderes -a
 	
 ## Information about completed jobs
 
