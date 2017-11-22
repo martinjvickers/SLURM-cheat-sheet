@@ -20,6 +20,41 @@ Submitting a job with multiple dependencies can be achieved using a colon to sep
 
 If you don't care about successful completion of a dependency in order to start the subsequent job, e.g. the dependency can fail with but you still want the next job to run afterwards, you can substitute `afterok` with `afterany`.
 
+## Submitting an array of tasks
+
+This is useful when you wish to run the same program on several files. In your job submission file you would have something like the following;
+
+	#!/bin/bash -e
+	#SBATCH -p nbi-short
+	#SBATCH --mail-type=END,FAIL
+	#SBATCH --mail-user=YOUR_EMAIL_ADDRESS@JIC.AC.UK
+	#SBATCH --mem-per-cpu=4000
+	#SBATCH --cpus-per-task=1
+	#SBATCH --array=0-4
+	
+	source fastqc-0.11.3
+	
+	ARRAY=(sample_01.fastq.gz sample_02.fastq.gz sample_03.fastq.gz sample_04.fastq.gz sample_05.fastq.gz)
+	
+	srun fastqc ${ARRAY[$SLURM_ARRAY_TASK_ID]}
+
+Two important things to note with this are;
+
+* The resources you request are `per-cpu`. If you get this wrong and simply use `--mem` then that's the complete memory for the whole job so you will likely fail. The same goes for cpu.
+* The array starts at zero hence 0-2
+
+You can also specify specific elements in the array, e.g. element 0 and 2, excluding 1 and 3;
+
+	#SBATCH --array=0,2,4
+
+Specifying the number of concurrent tasks at any one time, in this case 2;
+
+	#SBATCH --array=0-4%2
+
+Limiting the number of concurrent tasks is especially important if you wish to submit a job array with hundreds of tasks. You may have to consider other resources besides just CPU and RAM, namely storage. 
+
+For example, if the program you're running creates large temporary files while processing. The CPU/RAM resources may be low and/or readily available however if all tasks create large temporary files at the same time you may reach your quota, killing all of your jobs. Limiting the number of concurrent tasks is a useful way to mitigate this.
+
 ## Info on running/pending jobs
 
 Info in all running jobs:
