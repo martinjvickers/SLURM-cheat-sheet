@@ -81,6 +81,10 @@ Detailed information about a pending/running job:
 
 	scontrol show jobid -dd 524552
 	
+Information about utilisation of a running job
+
+         seff 25472175
+
 ### snodetop
 
 Show detailed information using atop about node on which a job is running:
